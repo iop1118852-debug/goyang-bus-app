@@ -1,97 +1,51 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Goyang Bus - PWA</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2563EB">
-  
-  <!-- Fallback simple visual styles matching Clean Minimalism -->
+  <title>고양시 버스 검색</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: #FAFAFA;
-      color: #0F172A;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .card {
-      background: #FFFFFF;
-      padding: 2rem;
-      border-radius: 24px;
-      border: 1px solid #F1F5F9;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      max-width: 400px;
-      text-align: center;
-    }
-    .logo {
-      width: 64px;
-      height: 64px;
-      background-color: rgba(37, 99, 235, 0.08);
-      color: #2563EB;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.025em;
-    }
-    p {
-      color: #475569;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      margin-bottom: 1.5rem;
-    }
-    .badge {
-      display: inline-block;
-      background-color: #DBEAFE;
-      color: #1D4ED8;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
+    body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+    input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
+    #result { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">🚌</div>
-    <div class="badge">Goyang Bus PWA</div>
-    <h1>Goyang Bus Companion</h1>
-    <p>
-      Ứng dụng hỗ trợ tra cứu lộ trình xe buýt đa ngôn ngữ cho thành phố Goyang tự hào hỗ trợ cài đặt ngoại tuyến (Progressive Web App).
-    </p>
-    <p style="font-size: 0.75rem; color: #94A3B8;">
-      Service Worker and Manifest are active. Install this web page to add it directly to your home screen!
-    </p>
-  </div>
+  <h2>고양시 버스 노선 검색</h2>
+  <input type="text" id="searchInput" placeholder="버스 번호 또는 이름을 입력하세요...">
+  <div id="result">데이터를 불러오는 중...</div>
 
   <script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-          .then((registration) => {
-            console.log('Service Worker registered successfully with scope:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('Service Worker registration failed:', error);
-          });
-      });
+    let busData = [];
+
+    async function loadData() {
+      try {
+        // GitHub에 올라간 파일 이름 그대로 사용
+        const response = await fetch('통합 문서 (1)(Sheet1) (1).csv');
+        if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
+        const text = await response.text();
+        // 줄바꿈 단위로 나누기
+        busData = text.split(/\r?\n/);
+        document.getElementById('result').innerHTML = "검색할 버스 번호를 입력하세요.";
+      } catch (err) {
+        document.getElementById('result').innerHTML = "오류 발생: " + err.message;
+      }
     }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      const resultDiv = document.getElementById('result');
+      
+      if (!query) {
+        resultDiv.innerHTML = "검색할 버스 번호를 입력하세요.";
+        return;
+      }
+
+      const filtered = busData.filter(line => line.includes(query));
+      resultDiv.innerHTML = filtered.length > 0 ? filtered.join('<br>') : "검색 결과가 없습니다.";
+    });
+
+    loadData();
   </script>
 </body>
 </html>
