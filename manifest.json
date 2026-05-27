@@ -1,0 +1,29 @@
+{
+  "short_name": "Goyang Bus",
+  "name": "Goyang Bus - Multilingual Transit Guide",
+  "description": "Multilingual bus route helper for Goyang city, customized in Vietnamese and Lao with complete transliteration and offline-capable schedules.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#FAFAFA",
+  "theme_color": "#2563EB",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": [
+    "transportation",
+    "utilities"
+  ],
+  "lang": "vi"
+}
